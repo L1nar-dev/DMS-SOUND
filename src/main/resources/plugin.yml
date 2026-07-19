@@ -1,0 +1,10 @@
+name: ServerMusic
+version: '1.0.0'
+main: me.linar.servermusic.ServerMusicPlugin
+api-version: '26.1.2'
+commands:
+  servermusic:
+    description: Управление сюжетной музыкой на сервере
+    permission: servermusic.admin
+    permission-message: §cУ вас нет прав на использование этой команды!
+    aliases: [smusic]
