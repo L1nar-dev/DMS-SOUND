@@ -7,16 +7,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    # Даем процессу права на создание релизов и загрузку файлов
     permissions:
       contents: write
 
     steps:
-    # 1. Скачиваем код из твоего репозитория
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2. Устанавливаем Java 21
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -24,19 +21,23 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
-    # 3. Компилируем плагин через Мавен
+    # НОВЫЙ ШАГ: Создаем папку и скачиваем ядро напрямую по ссылке
+    - name: Download Purpur Core
+      run: |
+        mkdir -id libs
+        wget -O libs/purpur-26.1.2.jar https://repo.purpurmc.org/snapshots/org/purpurmc/purpur/purpur/26.1.2-SNAPSHOT/purpur-26.1.2-2592.jar
+
     - name: Build with Maven
       run: mvn -B clean package --file pom.xml
 
-    # 4. Автоматически создаем Релиз и загружаем туда готовый .jar
     - name: Create Release and Upload Jar
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: build-${{ github.run_number }} # Каждая сборка получит уникальный номер
+        tag_name: build-${{ github.run_number }}
         name: "Авто-сборка #${{ github.run_number }}"
-        body: "Автоматический билд плагина из ветки ${{ github.ref_name }}. Хеш коммита: ${{ github.sha }}"
+        body: "Автоматический билд плагина. Хеш коммита: ${{ github.sha }}"
         draft: false
         prerelease: false
-        files: target/*.jar # Указываем путь к скомпилированному плагину
+        files: target/*.jar
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Этот токен Гитхаб создает сам, ничего настраивать не нужно
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
