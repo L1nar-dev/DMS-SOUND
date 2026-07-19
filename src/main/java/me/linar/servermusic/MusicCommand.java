@@ -68,45 +68,59 @@ public class MusicCommand implements CommandExecutor {
     }
 
     private boolean sendMusicPacket(Player player, String action, String trackName) {
+    if (!action.equals("PLAY")) {
+        // Для STOP и PAUSE отправляем один маленький пакет
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF(action);    
-        out.writeUTF(trackName); 
-
-        // Если команда PLAY, считываем файл с сервера и пихаем его байты в этот же пакет
-        if (action.equals("PLAY")) {
-            // Файлы будут лежать в паапке: plugins/ServerMusic/tracks/имя_трека.wav
-            File tracksDir = new File(plugin.getDataFolder(), "tracks");
-            if (!tracksDir.exists()) {
-                tracksDir.mkdirs();
-            }
-            
-            File trackFile = new File(tracksDir, trackName + ".wav");
-            
-            if (!trackFile.exists()) {
-                plugin.getLogger().warning("Файл трека не найден на сервере: " + trackFile.getAbsolutePath());
-                return false;
-            }
-
-            try {
-                // Читаем аудиофайл в массив байт
-                byte[] audioBytes = Files.readAllBytes(trackFile.toPath());
-                
-                // Записываем сначала размер массива, чтобы клиент знал, сколько байт читать
-                out.writeInt(audioBytes.length);
-                // Записываем сами байты звука
-                out.write(audioBytes);
-                
-            } catch (IOException e) {
-                plugin.getLogger().severe("Ошибка чтения аудиофайла " + trackName + ": " + e.getMessage());
-                return false;
-            }
-        } else {
-            // Для STOP и PAUSE музыка не нужна, пишем размер 0
-            out.writeInt(0);
-        }
-
-        // Отправляем массив байт через плагин-канал
+        out.writeUTF(action);
+        out.writeUTF(trackName);
+        out.writeInt(0); // Размер данных 0
+        out.writeInt(0); // Индекс куска 0
+        out.writeInt(1); // Всего кусков 1
         player.sendPluginMessage(plugin, ServerMusicPlugin.CHANNEL, out.toByteArray());
         return true;
     }
+
+    // Логика для PLAY
+    File tracksDir = new File(plugin.getDataFolder(), "tracks");
+    if (!tracksDir.exists()) {
+        tracksDir.mkdirs();
+    }
+    
+    File trackFile = new File(tracksDir, trackName + ".wav");
+    if (!trackFile.exists()) {
+        plugin.getLogger().warning("Файл трека не найден: " + trackFile.getAbsolutePath());
+        return false;
+    }
+
+    try {
+        byte[] audioBytes = Files.readAllBytes(trackFile.toPath());
+        
+        int maxChunkSize = 30000; // Безопасный размер (меньше 32767)
+        int totalChunks = (int) Math.ceil((double) audioBytes.length / maxChunkSize);
+
+        for (int i = 0; i < totalChunks; i++) {
+            int start = i * maxChunkSize;
+            int end = Math.min(audioBytes.length, start + maxChunkSize);
+            int currentChunkLength = end - start;
+
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF(action);     // Действие ("PLAY")
+            out.writeUTF(trackName);  // Название трека
+            out.writeInt(currentChunkLength); // Размер конкретно этого куска
+            out.writeInt(i);          // Номер текущего куска (начиная с 0)
+            out.writeInt(totalChunks); // Сколько всего кусков клиент должен ждать
+
+            // Записываем сам кусок байтов
+            out.write(audioBytes, start, currentChunkLength);
+
+            // Отправляем кусок по сети
+            player.sendPluginMessage(plugin, ServerMusicPlugin.CHANNEL, out.toByteArray());
+        }
+
+    } catch (IOException e) {
+        plugin.getLogger().severe("Ошибка чтения файла " + trackName + ": " + e.getMessage());
+        return false;
+    }
+    return true;
+}
 }
