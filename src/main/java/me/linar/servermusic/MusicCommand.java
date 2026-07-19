@@ -21,7 +21,6 @@ public class MusicCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        // Синтаксис: /smusic <play|stop|pause> <селектор> [название_трека]
         if (args.length < 2) {
             sender.sendMessage("§cИспользование: /smusic <play|stop|pause> <игрок/селектор> [трек]");
             return true;
@@ -41,7 +40,6 @@ public class MusicCommand implements CommandExecutor {
             return true;
         }
 
-        // Парсим селекторы через Bukkit API
         List<Entity> targets;
         try {
             targets = Bukkit.selectEntities(sender, targetSelector);
@@ -63,10 +61,9 @@ public class MusicCommand implements CommandExecutor {
     }
 
     private void sendMusicPacket(Player player, String action, String trackName) {
-        // Формируем поток байт для отправки через Plugin Messaging
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF(action);    // Отправляем строку действия ("PLAY", "STOP", "PAUSE")
-        out.writeUTF(trackName); // Отправляем имя файла (например, "chapter1_boss")
+        out.writeUTF(action);    
+        out.writeUTF(trackName); 
 
         player.sendPluginMessage(plugin, ServerMusicPlugin.CHANNEL, out.toByteArray());
     }
