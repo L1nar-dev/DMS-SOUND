@@ -21,10 +21,10 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
-    # НОВЫЙ ШАГ: Создаем папку и скачиваем ядро напрямую по ссылке
+# ИСПРАВЛЕННЫЙ ШАГ: Создаем папку через -p и скачиваем ядро
     - name: Download Purpur Core
       run: |
-        mkdir -id libs
+        mkdir -p libs
         wget -O libs/purpur-26.1.2.jar https://repo.purpurmc.org/snapshots/org/purpurmc/purpur/purpur/26.1.2-SNAPSHOT/purpur-26.1.2-2592.jar
 
     - name: Build with Maven
