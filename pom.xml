@@ -10,10 +10,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <!-- Железно работаем на Java 25 -->
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -68,27 +66,15 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <release>25</release>
+                    <source>21</source>
+                    <target>21</target>
                 </configuration>
             </plugin>
             
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.1</version> <!-- Обновили до версии с поддержкой свежих JDK -->
-                <dependencies>
-                    <!-- Прокачиваем Shade актуальным ASM, чтобы он переварил Java 25 (major 69) -->
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>9.7</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm-commons</artifactId>
-                        <version>9.7</version>
-                    </dependency>
-                </dependencies>
+                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
