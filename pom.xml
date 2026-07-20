@@ -15,49 +15,47 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-<repositories>
-    <!-- Репозиторий Purpur -->
-    <repository>
-        <id>purpurmc</id>
-        <url>https://repo.purpurmc.org/snapshots</url>
-    </repository>
-    <!-- Simple Voice Chat API -->
-    <repository>
-        <id>maxhenkel</id>
-        <url>https://maven.maxhenkel.de/repository/public</url>
-    </repository>
-    <!-- Lavaplayer Fork (Arbjerg) -->
-    <repository>
-        <id>lavalink</id>
-        <url>https://maven.lavalink.dev/releases</url>
-    </repository>
-</repositories>
+    <repositories>
+        <!-- Публичный репозиторий Purpur -->
+        <repository>
+            <id>purpurmc</id>
+            <url>https://repo.purpurmc.org/public</url>
+        </repository>
+        <!-- Simple Voice Chat API -->
+        <repository>
+            <id>maxhenkel</id>
+            <url>https://maven.maxhenkel.de/repository/public</url>
+        </repository>
+        <!-- Lavaplayer Fork (Arbjerg) -->
+        <repository>
+            <id>lavalink</id>
+            <url>https://maven.lavalink.dev/releases</url>
+        </repository>
+    </repositories>
 
-<dependencies>
-    <!-- Purpur API 26.1.2 (Без лишних хвостов сборки) -->
-    <dependency>
-        <groupId>org.purpurmc.purpur</groupId>
-        <artifactId>purpur-api</artifactId>
-        <version>26.1.2-R0.1-SNAPSHOT</version>
-        <scope>provided</scope>
-    </dependency>
-
-    <!-- Simple Voice Chat API (С правильным префиксом bukkit-) -->
-    <dependency>
-        <groupId>de.maxhenkel.voicechat</groupId>
-        <artifactId>voicechat-api</artifactId>
-        <version>bukkit-2.5.24</version>
-        <scope>provided</scope>
-    </dependency>
-
-    <!-- Lavaplayer -->
-    <dependency>
-        <groupId>dev.arbjerg</groupId>
-        <artifactId>lavaplayer</artifactId>
-        <version>2.2.2</version>
-        <scope>compile</scope>
-    </dependency>
-</dependencies>
+    <dependencies>
+        <!-- Purpur API -->
+        <dependency>
+            <groupId>org.purpurmc.purpur</groupId>
+            <artifactId>purpur-api</artifactId>
+            <version>26.1.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Simple Voice Chat API -->
+        <dependency>
+            <groupId>de.maxhenkel.voicechat</groupId>
+            <artifactId>voicechat-api</artifactId>
+            <version>bukkit-26.1.2-2.5.24</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Lavaplayer -->
+        <dependency>
+            <groupId>dev.arbjerg</groupId>
+            <artifactId>lavaplayer</artifactId>
+            <version>2.2.2</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -81,12 +79,12 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <relocatedArtifacts>
+                            <relocations>
                                 <relocation>
                                     <pattern>com.sedmelluq.discord.lavaplayer</pattern>
                                     <shadedPattern>ru.portal.worldmusic.libs.lavaplayer</shadedPattern>
                                 </relocation>
-                            </relocatedArtifacts>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
