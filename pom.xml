@@ -16,15 +16,15 @@
     </properties>
 
     <repositories>
-        <!-- Официальный репозиторий Purpur из гитхаба -->
+        <!-- Репозиторий Purpur -->
         <repository>
             <id>purpur</id>
             <url>https://repo.purpurmc.org/snapshots</url>
         </repository>
-        <!-- Точный репозиторий релизов Simple Voice Chat -->
+        <!-- Правильный публичный репозиторий Simple Voice Chat -->
         <repository>
-            <id>maxhenkel-releases</id>
-            <url>https://maven.maxhenkel.de/repository/releases/</url>
+            <id>maxhenkel-public</id>
+            <url>https://maven.maxhenkel.de/repository/public</url>
         </repository>
         <!-- Lavaplayer Fork -->
         <repository>
@@ -34,7 +34,7 @@
     </repositories>
 
     <dependencies>
-        <!-- Purpur API (Динамический поиск билда под 26.1.2) -->
+        <!-- Purpur API -->
         <dependency>
             <groupId>org.purpurmc.purpur</groupId>
             <artifactId>purpur-api</artifactId>
@@ -42,7 +42,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Simple Voice Chat API (Чистая рабочая версия из списка) -->
+        <!-- Simple Voice Chat API (Твоя найденная рабочая версия) -->
         <dependency>
             <groupId>de.maxhenkel.voicechat</groupId>
             <artifactId>voicechat-api</artifactId>
