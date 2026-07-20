@@ -6,7 +6,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import de.maxhenkel.voicechat.api.VoicechatConnection;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
-import de.maxhenkel.voicechat.api.audio.channels.StaticAudioChannel;
+import de.maxhenkel.voicechat.api.audio.StaticAudioChannel; // Новый путь импорта в SVC 2.6.x
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -69,25 +69,31 @@ public class WorldAudioManager {
             if (frame == null) return;
 
             byte[] data = frame.getData();
-            short[] samples = new short[data.length / 2];
-            for (int i = 0; i < samples.length; i++) {
-                samples[i] = (short) (((data[i * 2] & 0xFF) << 8) | (data[i * 2 + 1] & 0xFF));
+            short[] samples = new short[960]; // 20мс моно-звука для SVC
+
+            // Конвертируем входящий Стерео PCM поток в Моно PCM на лету
+            for (int i = 0; i < 960; i++) {
+                int base = i * 4;
+                if (base + 3 < data.length) {
+                    short left = (short) (((data[base] & 0xFF) << 8) | (data[base + 1] & 0xFF));
+                    short right = (short) (((data[base + 2] & 0xFF) << 8) | (data[base + 3] & 0xFF));
+                    samples[i] = (short) ((left + right) / 2); // Среднее значение каналов
+                }
             }
 
             VoicechatServerApi api = VoicechatPluginImpl.getApi();
             if (api == null) return;
 
-            // Динамическое отключение
+            // Динамическое отключение игроков
             channels.keySet().removeIf(uuid -> {
                 Player p = Bukkit.getPlayer(uuid);
                 return p == null || !p.getWorld().equals(world);
             });
 
-            // Динамическое подключение
+            // Динамическое подключение игроков
             for (Player p : world.getPlayers()) {
                 VoicechatConnection conn = api.getConnectionOf(p.getUniqueId());
                 if (conn != null && conn.isInstalled()) {
-                    // Новое SVC API: Передаем ID, ServerLevel и Соединение игрока
                     StaticAudioChannel channel = channels.computeIfAbsent(p.getUniqueId(), uuid -> 
                         api.createStaticAudioChannel(UUID.randomUUID(), api.fromServerLevel(world), conn)
                     );
