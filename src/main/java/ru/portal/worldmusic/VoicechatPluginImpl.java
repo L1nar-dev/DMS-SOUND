@@ -1,5 +1,6 @@
 package ru.portal.worldmusic;
 
+import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
 
@@ -12,8 +13,10 @@ public class VoicechatPluginImpl implements VoicechatPlugin {
     }
 
     @Override
-    public void initialize(VoicechatServerApi serverApi) {
-        api = serverApi;
+    public void initialize(VoicechatApi voicechatApi) {
+        if (voicechatApi instanceof VoicechatServerApi) {
+            api = (VoicechatServerApi) voicechatApi;
+        }
     }
 
     public static VoicechatServerApi getApi() {
