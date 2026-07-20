@@ -1,0 +1,38 @@
+name: Build WorldMusic Plugin
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Java 25 (EA)
+      uses: actions/setup-java@v4
+      with:
+        java-version: '25'
+        distribution: 'oracle'
+        architecture: x64
+
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Build Plugin with Maven
+      run: mvn clean package --file pom.xml
+
+    - name: Upload Compiled Jar
+      uses: actions/upload-artifact@v4
+      with:
+        name: WorldMusic-Plugin
+        path: target/WorldMusic-*.jar
