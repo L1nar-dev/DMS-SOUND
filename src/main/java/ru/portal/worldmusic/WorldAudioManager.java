@@ -6,11 +6,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import de.maxhenkel.voicechat.api.VoicechatConnection;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
-import de.maxhenkel.voicechat.api.audio.channel.StaticAudioChannel; // <-- Вот он, правильный путь!
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -18,9 +18,12 @@ import java.util.concurrent.*;
 public class WorldAudioManager {
     private final World world;
     private final AudioPlayer player;
-    private final Map<UUID, StaticAudioChannel> channels = new ConcurrentHashMap<>();
+    // Храним каналы как Object, чтобы избавиться от капризных импортов
+    private final Map<UUID, Object> channels = new ConcurrentHashMap<>();
     private ScheduledExecutorService executor;
     private ScheduledFuture<?> ticker;
+    // Кешируем метод отправки для максимальной скорости работы
+    private static Method sendMethod = null;
 
     public WorldAudioManager(World world, AudioPlayerManager manager) {
         this.world = world;
@@ -94,10 +97,15 @@ public class WorldAudioManager {
             for (Player p : world.getPlayers()) {
                 VoicechatConnection conn = api.getConnectionOf(p.getUniqueId());
                 if (conn != null && conn.isInstalled()) {
-                    StaticAudioChannel channel = channels.computeIfAbsent(p.getUniqueId(), uuid -> 
+                    Object channel = channels.computeIfAbsent(p.getUniqueId(), uuid -> 
                         api.createStaticAudioChannel(UUID.randomUUID(), api.fromServerLevel(world), conn)
                     );
-                    channel.send(samples);
+                    
+                    // Вызываем метод send(short[]) через рефлексию напрямую
+                    if (sendMethod == null) {
+                        sendMethod = channel.getClass().getMethod("send", short[].class);
+                    }
+                    sendMethod.invoke(channel, (Object) samples);
                 }
             }
         } catch (Exception e) {
