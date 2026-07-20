@@ -16,17 +16,17 @@
     </properties>
 
     <repositories>
-        <!-- Публичный репозиторий Purpur -->
+        <!-- Репозиторий Paper -->
         <repository>
-            <id>purpurmc</id>
-            <url>https://repo.purpurmc.org/public</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <!-- Simple Voice Chat API -->
         <repository>
             <id>maxhenkel</id>
             <url>https://maven.maxhenkel.de/repository/public</url>
         </repository>
-        <!-- Lavaplayer Fork (Arbjerg) -->
+        <!-- Lavaplayer Fork -->
         <repository>
             <id>lavalink</id>
             <url>https://maven.lavalink.dev/releases</url>
@@ -34,20 +34,22 @@
     </repositories>
 
     <dependencies>
-        <!-- Purpur API -->
+        <!-- Paper API -->
         <dependency>
-            <groupId>org.purpurmc.purpur</groupId>
-            <artifactId>purpur-api</artifactId>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
             <version>26.1.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- Simple Voice Chat API -->
         <dependency>
             <groupId>de.maxhenkel.voicechat</groupId>
             <artifactId>voicechat-api</artifactId>
-            <version>bukkit-26.1.2-2.5.24</version>
+            <version>bukkit-26.1.2-2.6.18</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- Lavaplayer -->
         <dependency>
             <groupId>dev.arbjerg</groupId>
