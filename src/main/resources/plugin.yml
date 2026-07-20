@@ -1,0 +1,10 @@
+name: WorldMusic
+version: ${project.version}
+main: ru.portal.worldmusic.WorldMusic
+api-version: '26.1.2'
+softdepend: [Voicechat]
+commands:
+  worldmusic:
+    description: Управление фоновой музыкой в мирах
+    permission: worldmusic.admin
+    aliases: [wm]
