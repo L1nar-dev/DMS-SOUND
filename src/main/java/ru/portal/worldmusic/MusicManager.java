@@ -1,6 +1,6 @@
 package ru.portal.worldmusic;
 
-import com.sedmelluq.discord.lavaplayer.format.PcmAudioDataFormat;
+import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -15,10 +15,8 @@ public class MusicManager {
     public MusicManager() {
         this.playerManager = new DefaultAudioPlayerManager();
         
-        // Lavaplayer 2.x Fix: используем PcmAudioDataFormat вместо абстрактного AudioDataFormat
-        playerManager.getConfiguration().setOutputFormat(
-            new PcmAudioDataFormat(1, 48000, 960, true)
-        );
+        // Используем стандартный стабильный формат PCM (48000Hz, Stereo, Big Endian)
+        playerManager.getConfiguration().setOutputFormat(StandardAudioDataFormats.COMMON_PCM_S16_BE);
 
         // Включаем ТОЛЬКО локальные источники
         AudioSourceManagers.registerLocalSource(playerManager);
