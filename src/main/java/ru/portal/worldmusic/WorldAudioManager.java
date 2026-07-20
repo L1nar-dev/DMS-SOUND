@@ -66,7 +66,7 @@ public class WorldAudioManager {
             }
 
             AudioFrame frame = player.provide();
-            if (frame == null) return; // Буферизация
+            if (frame == null) return;
 
             byte[] data = frame.getData();
             short[] samples = new short[data.length / 2];
@@ -77,18 +77,19 @@ public class WorldAudioManager {
             VoicechatServerApi api = VoicechatPluginImpl.getApi();
             if (api == null) return;
 
-            // Динамическое отключение: удаляем каналы тех, кто ушел из мира или ливнул
+            // Динамическое отключение
             channels.keySet().removeIf(uuid -> {
                 Player p = Bukkit.getPlayer(uuid);
                 return p == null || !p.getWorld().equals(world);
             });
 
-            // Динамическое подключение и отправка пакетов
+            // Динамическое подключение
             for (Player p : world.getPlayers()) {
                 VoicechatConnection conn = api.getConnectionOf(p.getUniqueId());
                 if (conn != null && conn.isInstalled()) {
+                    // Новое SVC API: Передаем ID, ServerLevel и Соединение игрока
                     StaticAudioChannel channel = channels.computeIfAbsent(p.getUniqueId(), uuid -> 
-                        api.createStaticAudioChannel(UUID.randomUUID(), conn)
+                        api.createStaticAudioChannel(UUID.randomUUID(), api.fromServerLevel(world), conn)
                     );
                     channel.send(samples);
                 }
