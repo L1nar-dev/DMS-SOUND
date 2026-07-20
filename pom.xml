@@ -10,8 +10,10 @@
     <packaging>jar</packaging>
 
     <properties>
+        <!-- Железно работаем на Java 25 -->
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -21,7 +23,7 @@
             <id>purpur</id>
             <url>https://repo.purpurmc.org/snapshots</url>
         </repository>
-        <!-- Правильный публичный репозиторий Simple Voice Chat -->
+        <!-- Публичный репозиторий Simple Voice Chat -->
         <repository>
             <id>maxhenkel-public</id>
             <url>https://maven.maxhenkel.de/repository/public</url>
@@ -42,7 +44,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Simple Voice Chat API (Твоя найденная рабочая версия) -->
+        <!-- Simple Voice Chat API -->
         <dependency>
             <groupId>de.maxhenkel.voicechat</groupId>
             <artifactId>voicechat-api</artifactId>
@@ -69,10 +71,24 @@
                     <release>25</release>
                 </configuration>
             </plugin>
+            
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version> <!-- Обновили до версии с поддержкой свежих JDK -->
+                <dependencies>
+                    <!-- Прокачиваем Shade актуальным ASM, чтобы он переварил Java 25 (major 69) -->
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                        <version>9.7</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm-commons</artifactId>
+                        <version>9.7</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <phase>package</phase>
