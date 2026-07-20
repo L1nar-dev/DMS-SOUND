@@ -1,6 +1,6 @@
 package ru.portal.worldmusic;
 
-import com.sedmelluq.discord.lavaplayer.format.AudioDataFormat;
+import com.sedmelluq.discord.lavaplayer.format.PcmAudioDataFormat;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
@@ -15,12 +15,12 @@ public class MusicManager {
     public MusicManager() {
         this.playerManager = new DefaultAudioPlayerManager();
         
-        // Настраиваем Lavaplayer на отдачу PCM 48000Hz Mono Signed Big-Endian (идеально для SVC)
+        // Lavaplayer 2.x Fix: используем PcmAudioDataFormat вместо абстрактного AudioDataFormat
         playerManager.getConfiguration().setOutputFormat(
-            new AudioDataFormat(1, 48000, 960, AudioDataFormat.Codec.PCM_S16BE)
+            new PcmAudioDataFormat(1, 48000, 960, true)
         );
 
-        // Включаем ТОЛЬКО локальные источники (блокировка внешних сетей)
+        // Включаем ТОЛЬКО локальные источники
         AudioSourceManagers.registerLocalSource(playerManager);
     }
 
