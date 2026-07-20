@@ -1,6 +1,6 @@
 package ru.portal.worldmusic;
 
-import de.maxhenkel.voicechat.api.VoicechatService;
+import de.maxhenkel.voicechat.api.BukkitVoicechatService;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
@@ -20,8 +20,8 @@ public class WorldMusic extends JavaPlugin {
 
         musicManager = new MusicManager();
 
-        // Регистрируем плагин в SVC API
-        VoicechatService service = getServer().getServicesManager().load(VoicechatService.class);
+        // Регистрируем плагин в SVC API через новый BukkitVoicechatService
+        BukkitVoicechatService service = getServer().getServicesManager().load(BukkitVoicechatService.class);
         if (service != null) {
             service.registerPlugin(new VoicechatPluginImpl());
             getLogger().info("Успешное подключение к Simple Voice Chat API!");
